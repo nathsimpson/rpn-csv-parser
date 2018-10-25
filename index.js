@@ -1,20 +1,20 @@
-const input = "10 5 +, 5 3 - "
-//const rowSpec = '(.*)[+\-*/],'
-const rowSpec = '5'
-const table = input.split(',');
-//console.log(table);
+const input = "10 55 +, 55 17 - , 8 2 +";
 
+function intify(value){
+      if(!isNaN(parseInt(value))){
+            value = parseInt(value)
+      }
+      return value;
+}
 
-// for (row in table) {
-//     console.log(row.trimStart())
-// }
+let table = input.split(',');
 
-console.log(table[1].trimStart());
+//converting each row to an array of cells, in the correct type
+table = table.map(row => row
+      .trimStart()
+      .trimEnd()
+      .split(' ')
+      .map(cell => intify(cell))
+);
 
-// let test1 = table[1].match(rowSpec);
-// console.log(test1);
-
-
-// function rowify(){
-
-// }
+console.log(table);

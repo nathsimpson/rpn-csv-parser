@@ -1,4 +1,11 @@
 const input = "2018 1995 -, 55 17 + , 8 2 * 4 /";
+const input1 = "b1 b2 +,2 b2 3 * -, ,+ , a1     ,5         , ,7 2 /, c2 3 * ,1 2       , ,5 1 2 + 4 * + 3 -"
+
+const specs = {
+      number : "[0-9]+",
+      variable : "[a-z]+[0-9]+",
+      operator: "[+\-\*\/]",
+}
 
 function tablify(input){
       let table = input.split(',');
@@ -9,11 +16,13 @@ function tablify(input){
             .trimEnd()
             .split(' ')
       );
-
       return table;
 }
 
 function intify(value){
+
+      console.log('checking:', value.match(specs['number']));
+
       if(!isNaN(parseInt(value))){
             value = parseInt(value);
       }
@@ -21,13 +30,18 @@ function intify(value){
 }
 
 function calcumulate(row){
-      const addition = (accumulator, currentValue) => accumulator + currentValue;
-      const subtraction = (accumulator, currentValue) => accumulator - currentValue;
-      const multiplication = (accumulator, currentValue) => accumulator * currentValue;
-      const division = (accumulator, currentValue) => accumulator / currentValue;
+
+      const operators = {
+            '+': (accumulator, currentValue) => accumulator + currentValue,
+            '-': (accumulator, currentValue) => accumulator - currentValue,
+            '*': (accumulator, currentValue) => accumulator * currentValue,
+            '/': (accumulator, currentValue) => accumulator / currentValue,
+      }
 
       let values = []
-      let operations = row.filter(item => isNaN(item));;
+
+      //count how many time a calculation is performed in a row
+      const operations = row.filter(item => isNaN(item));
 
       operations.forEach(operation => {
             for(i=0; i<row.length; i++){
@@ -35,22 +49,11 @@ function calcumulate(row){
                   if(isNaN(row[i])){
                         values = row.slice(0, i)
 
-                        if(row[i]=='+'){
-                              values = values.reduce(addition);
-                              row.splice(0, i+1, values);
+                        //perform calculation
+                        values = values.reduce(operators[row[i]]);
 
-                        }else if(row[i]=='-'){
-                              values = values.reduce(subtraction);
-                              row.splice(0, i+1, values);
-
-                        }else if(row[i]=='*'){
-                              values = values.reduce(multiplication);
-                              row.splice(0, i+1, values);
-
-                        }else if(row[i]=='/'){
-                              values = values.reduce(division);
-                              row.splice(0, i+1, values);
-                        }
+                        //place calculated value into array
+                        row.splice(0, i+1, values);
                   }
             }
       })
@@ -58,13 +61,16 @@ function calcumulate(row){
       return values;
 }
 
-console.log('start', input);
+console.log('start:', input);
 
+//convert to table
 table = tablify(input);
-table = table.map(row => row.map(cell => intify(cell)));
+console.log('tablify:', table);
 
+//convert each number in a cell to an integer
+table = table.map(row => row.map(cell => intify(cell)));
+console.log('intify:', table);
 
 //running calculations for each row
-table = table.map(row => calcumulate(row))
-
-console.log('end', table);
+table = table.map(row => calcumulate(row));
+console.log('calcumulate:', table);

@@ -1,6 +1,4 @@
-const input = "10 55 +, 55 17 - , 8 2 + 2 /";
-
-
+const input = "2018 1995 -, 55 17 + , 8 2 * 4 /";
 
 function tablify(input){
       let table = input.split(',');
@@ -33,8 +31,6 @@ function calcumulate(row){
 
       operations.forEach(operation => {
             for(i=0; i<row.length; i++){
-                  
-                  console.log(row[i], row, values);
 
                   if(isNaN(row[i])){
                         values = row.slice(0, i)
@@ -62,10 +58,11 @@ function calcumulate(row){
       return values;
 }
 
+console.log('start', input);
+
 table = tablify(input);
 table = table.map(row => row.map(cell => intify(cell)));
 
-console.log('start', table);
 
 //running calculations for each row
 table = table.map(row => calcumulate(row))

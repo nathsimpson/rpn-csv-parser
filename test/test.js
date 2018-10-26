@@ -1,5 +1,6 @@
-var assert = require('assert');
+import { calcumulate, tablify, intify } from '../index'
 
+var assert = require('assert');
 
 
 const input = "10 55 +, 55 17 - , 8 2 + 2 /";

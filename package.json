@@ -4,6 +4,7 @@
   "description": "Coding challenge from Dom",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "mocha"
   },
   "author": "Nathan Simpson",

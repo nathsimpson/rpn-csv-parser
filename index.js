@@ -1,34 +1,65 @@
-const input = "2018 1995 -, 55 17 + , 8 2 4 * /";
-const input1 =
-  "b1 b2 +,2 b2 3 * -, ,+ , a1     ,5         , ,7 2 /, c2 3 * ,1 2       , ,5 1 2 + 4 * + 3 -";
+const input1 = "2018 1995 -, 55 17 5 + - , 8 2 4 * /, 5 1 2 + 4 * + 3 -";
+
+const input2 = `1 2 +,2 2 3 * -, ,+
+  a1     ,5         , ,7 2 /
+  c2 3 * ,1 2       , ,5 1 2 + 4 * + 3 -`;
+
+const input = `b1 b2 +,2 b2 3 * -, ,+
+a1     ,5         , ,7 2 /
+c2 3 * ,1 2       , ,5 1 2 + 4 * + 3 -`;
 
 const specs = {
-  number: new RegExp("[0-9]+"),
-  variable: new RegExp("[a-z]+[0-9]+"),
+  number: new RegExp("^[0-9]+"),
+  coordinate: new RegExp("[a-z]+[0-9]+"),
   operator: new RegExp("[+\\-\\*\\/]")
 };
 
 function tablify(input) {
-  let table = input.split(",");
-
   //converting each row to an array of cells
-  table = table.map(row =>
-    row
-      .trimStart()
-      .trimEnd()
-      .split(" ")
+  let table = input.split("\n").map(row =>
+    row.split(",").map(cell => {
+      return cell
+        .trimStart()
+        .trimEnd()
+        .split(" ");
+    })
   );
+
   return table;
 }
 
-function intify(value) {
-  if (!isNaN(parseInt(value))) {
-    value = parseInt(value);
+function verify(cell) {
+  const numbers = [];
+  const operators = [];
+  const variables = [];
+  let error = false;
+
+  cell.map(item => {
+    if (specs.number.test(item)) {
+      numbers.push(item);
+    } else if (specs.coordinate.test(item)) {
+      variables.push(item);
+    } else if (specs.operator.test(item)) {
+      operators.push(item);
+    } else {
+      error = true;
+    }
+  });
+
+  if (
+    (numbers.length < 1 || operators.length < 1 || error )
+    && (cell.length != 1 && cell[0] != '')
+  ){
+    //console.log(cell);
+    return "#ERR";
+  } else if(cell.length == 1 && cell[0] == ''){
+    return [ 0 ];
+  }else {
+    return cell;
   }
-  return value;
 }
 
-function calcumulate(row) {
+function calcumulate(cell) {
   const operators = {
     "+": (accumulator, currentValue) => accumulator + currentValue,
     "-": (accumulator, currentValue) => accumulator - currentValue,
@@ -36,37 +67,40 @@ function calcumulate(row) {
     "/": (accumulator, currentValue) => accumulator / currentValue
   };
 
-  let values = [];
+  const stack = [];
+  const values = [];
 
-  //count how many time a calculation is performed in a row
-  let operations = row.filter(item => item.toString().match(specs.operator));
-  row = row.filter(item => !item.toString().match(specs.operator));
-
-  operations.forEach(op => {
-    values = row.slice(0, 2);
-
-    //perform calculation
-    values = values.reduce(operators[op]);
-
-    //place calculated value into array
-    row.splice(2, 0, values);
+  cell.map(item => {
+    if (specs.number.test(item)) {
+      item = parseInt(item);
+      stack.push(item);
+    } else if (specs.operator.test(item)) {
+      const operand1 = stack.pop();
+      const operand2 = stack.pop();
+      const operands = [operand2, operand1];
+      const value = operands.reduce(operators[item]);
+      stack.push(value);
+    }
   });
 
-  return values;
+  //console.log("calcumulate:", stack[0]);
+  if (stack[0] === undefined) {
+    return "";
+  } else {
+    return stack[0];
+  }
 }
 
 console.log("input:", input);
 
-//convert to table
 table = tablify(input);
-//console.log("tablify:", table);
 
-//convert each number in a cell to an integer
-table = table.map(row => row.map(cell => intify(cell)));
-//console.log("intify:", table);
-
-//running calculations for each row
-table = table.map(row => calcumulate(row));
-//console.log("calcumulate:", table);
+table = table.map(row =>
+  row.map(cell => {
+    cell = verify(cell);
+    if(cell !=='#ERR'){console.log(cell); cell = calcumulate(cell)}
+    return cell;
+  })
+);
 
 console.log("output:", table);

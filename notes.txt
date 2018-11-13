@@ -1,0 +1,13 @@
+isNumber
+
+
+remove intify
+
+5 + '3' = 8
+
+should not remove items
+
+
+command-L (wrap in console.log snippit)
+
+JEST

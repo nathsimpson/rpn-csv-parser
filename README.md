@@ -1,4 +1,4 @@
-#Build a csv parser for a spreadsheet:
+# Build a csv parser for a spreadsheet:
 
 - write in node and without dependencies
 - each cell in the input csv includes a postfix notation (en.wikipedia.org/wiki/Reverse_Polish_notation)
@@ -9,15 +9,15 @@
 - cells that generate an error will print `ERR` but all other cells still do the deed
 - the app should print the output to stdout (no need to save new file)
 
-##example:
-###Input
+## examples:
+### Input
 ```
 b1 b2 +,2 b2 3 * -, ,+
 a1     ,5         , ,7 2 /
 c2 3 * ,1 2       , ,5 1 2 + 4 * + 3 -
 ```
 
-###Output
+### Output
 ```
 -8,-13,0,#ERR
 -8,5,0,3.5
